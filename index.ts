@@ -62,11 +62,38 @@ const divInt =
 
 const dirs = [[0,1],[0,-1],[-1,0],[1,0]]
 
+type AccessorDecorator<This, Return> =
+(this: void, target: ClassAccessorDecoratorTarget<This, Return>) =>
+ClassAccessorDecoratorResult<Firm, Return>
+
+const range =
+<This>
+(min: number, max: number) =>
+function (
+    this: This,
+    { get, set }: ClassAccessorDecoratorTarget<This, number>,
+) {
+    return {
+        get(this: This) {
+            return get.call(this)
+        },
+        set(this: This, newValue: number) {
+            set.call(this, Math.max(min, Math.min(newValue, max)))
+        },
+    }
+} as unknown as AccessorDecorator<This, number>
+
 class Firm {
     world
+
+    @range(0, 99)
     accessor x = randInt(0, 100)
-    y = randInt(0, 100)
+
+    @range(0, 99)
+    accessor  y = randInt(0, 100)
+
     price = 10
+
     constructor(world: World) {
         this.world = world
     }
