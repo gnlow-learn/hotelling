@@ -50,6 +50,12 @@ const max =
     return as[maxI]
 }
 
+const min =
+<A>
+(as: A[]) =>
+(d: (a: A) => number) =>
+    max(as)(a => -d(a))
+
 interface XY { x: number, y: number }
 
 const d =
@@ -150,7 +156,7 @@ class Consumer {
         firms: Firm[],
         cost: (firm: Firm, consumer: Consumer) => number,
     ) {
-        return max(firms)(firm => firm.price+cost(firm, this))
+        return min(firms)(firm => firm.price+cost(firm, this))
     }
 }
 
