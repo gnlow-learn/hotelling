@@ -1,6 +1,7 @@
 import { Consumer } from "./Consumer.ts"
 import { Firm } from "./Firm.ts"
-import { arr, divInt, d } from "./util.ts"
+import { arr, divInt } from "./util.ts"
+import { calcDists } from "./gpu.ts"
 
 export class World {
     width
@@ -15,14 +16,13 @@ export class World {
         this.consumers = arr(this.width*this.height)
             .map(i => new Consumer(...divInt(i, this.width)))
     }
-    transportationCost(firm: Firm, consumer: Consumer) {
-        return d(firm)(consumer)
-    }
     getChosenFirms() {
+        const d = calcDists(this.width, this.height)(this.firms)
+
         return this.consumers.map(consumer =>
             consumer.choose(
                 this.firms, 
-                this.transportationCost,
+                d,
             )
         )
     }

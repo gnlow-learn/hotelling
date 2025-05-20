@@ -39,10 +39,10 @@ export const min =
 (d: (a: A) => number) =>
     max(as)(a => -d(a))
 
-interface XY { x: number, y: number }
+export interface XY { x: number, y: number }
 
 export const d =
-(a: XY) => (b: XY) =>
+(a: XY, b: XY) =>
     Math.hypot(b.x-a.x, b.y-a.y)
 
 export const divInt =
