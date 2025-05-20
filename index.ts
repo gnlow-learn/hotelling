@@ -62,26 +62,30 @@ const divInt =
 
 const dirs = [[0,1],[0,-1],[-1,0],[1,0]]
 
-type AccessorDecorator<This, Return> =
-(this: void, target: ClassAccessorDecoratorTarget<This, Return>) =>
-ClassAccessorDecoratorResult<Firm, Return>
-
-const range =
-<This>
-(min: number, max: number) =>
-function (
+const accessorDecorator =
+<Args extends unknown[], This, Return>
+(f: (...args: Args) => { getV(v: Return): Return, setV(v: Return): Return }) =>
+(...args: Args) => function (
     this: This,
-    { get, set }: ClassAccessorDecoratorTarget<This, number>,
+    { get, set }: ClassAccessorDecoratorTarget<This, Return>,
 ) {
+    const { getV, setV } = f(...args)
     return {
         get(this: This) {
-            return get.call(this)
+            return getV(get.call(this))
         },
-        set(this: This, newValue: number) {
-            set.call(this, Math.max(min, Math.min(newValue, max)))
+        set(this: This, newValue: Return) {
+            set.call(this, setV(newValue))
         },
     }
-} as unknown as AccessorDecorator<This, number>
+}
+
+const range = accessorDecorator(
+    (min: number, max: number) => ({
+        getV: (v: number) => v,
+        setV: (v: number) => Math.max(min, Math.min(v, max)),
+    })
+)
 
 class Firm {
     world
