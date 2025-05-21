@@ -8,6 +8,7 @@ export class World {
     height
     firms
     consumers
+    getD
 
     constructor(width = 100, height = 100) {
         this.width = width
@@ -15,10 +16,10 @@ export class World {
         this.firms = arr(10).map(() => new Firm(this))
         this.consumers = arr(this.width*this.height)
             .map(i => new Consumer(...divInt(i, this.width)))
+        this.getD = calcDists(this.width, this.height, this.firms.length)
     }
     getChosenFirms() {
-        const d = calcDists(this.width, this.height)(this.firms)
-
+        const d = this.getD(this.firms)
         return this.consumers.map(consumer =>
             consumer.choose(
                 this.firms, 

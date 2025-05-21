@@ -16,11 +16,14 @@ render(html`
 const $canvas = document.querySelector("canvas")!
 
 const tick = () => new Promise(requestAnimationFrame)
+const wait = () => new Promise(o => setTimeout(o, 1000))
 
 const ctx = $canvas.getContext("2d")!
 
 const world = new World(100, 100)
+await wait()
 while (true) {
+    console.log("step")
     await tick()
     world.step()
     world.render(ctx)
